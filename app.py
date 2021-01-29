@@ -47,8 +47,9 @@ def limpiezatexto(text):
   text = text.replace('/',' ')
   #text = text.translate(str.maketrans('', '', string.punctuation))
   text = text.lower()
-  text = ' '.join([word for word in text.split() if word not in stop_words])
   text = unidecode.unidecode(text)
+  text = ' '.join([word for word in text.split() if word not in stop_words])
+  
   return text
 
 import re
@@ -135,8 +136,8 @@ from tensorflow.keras.models import Model
 #Dimensionality
 dimensionality = 256
 #The batch size and number of epochs
-batch_size = 5
-epochs = 300
+batch_size = 20
+epochs = 1200
 #Encoder
 encoder_inputs = Input(shape=(None, num_encoder_tokens))
 encoder_lstm = LSTM(dimensionality, return_state=True)
@@ -200,7 +201,7 @@ def decode_response(test_input):
   return decoded_sentence
 
 class ChatBot:
-  negative_responses = ("no", "nope", "nah", "naw", "not a chance", "sorry")
+  negative_responses = ("no", "nope", "nah", "naw", "not a chance", "perdon")
   exit_commands = ("quit", "pause", "exit", "goodbye", "bye", "later", "stop", "salir", "pausar", "chao", "detener", "hasta luego")
 #Method to start the conversation
   def start_chat(self):
@@ -287,7 +288,13 @@ def webhook():
                     recipient_id = messaging_event['recipient']['id']  # el facebook ID de la pagina que recibe (tu pagina)
                     message_text = messaging_event['message']['text']  # el texto del mensaje
 
+                    
+
 ## Parte modificada
+                    """print('DDebug')
+                    entrada = [" ".join(re.findall(r"\w+",message_text))]
+                    salidapreprocesada = " ".join(list(map(limpiezatexto, entrada)))"""
+
                     respuesta = ChatBot().generate_response(message_text)
 
                     send_message(sender_id, respuesta)
